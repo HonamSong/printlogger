@@ -1,5 +1,4 @@
 .python-version
 ./logs/*
 ./printlogger/__pycache__/
-./test*
 ./test/*
