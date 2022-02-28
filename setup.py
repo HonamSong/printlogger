@@ -29,7 +29,7 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     python_requires=">=3.7",
     url=about['__url__'],
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=[]),
     install_requires=open('requirements.txt').read(),
     classifiers=[
         "Programming Language :: Python :: 3",
