@@ -56,16 +56,39 @@ logging.custom("custom logger", "yellow", "warn", is_view=True)
 ![alt custom_logger](./img/custom_logger.png)
 
 ### print color list
-color|attribute
----|---
-```html<span style="color:green">green</span>``` | green (default info color)
-<span style="color:magenta">magenta</span> | magenta (default warn color)
-<span style="color:red">red</span> | red (default error color)
-<span style="color:yellow">yellow</span> | yellow (default debug color)
-<span style="color:blue">blue</span> | blue
-<span style="color:cyan">cyan</span> | cyan
-<span style="color:grey">grey</span> | grey
-<span style="color:white">white</span> | white
+<style>
+    .heatMap {
+        width: 70%;
+        text-align: center;
+    }
+    .heatMap th {
+        background: grey;
+        word-wrap: break-word;
+        text-align: center;
+    }
+    .heatMap tr:nth-child(1) { background: green; }
+    .heatMap tr:nth-child(2) { background: magenta; }
+    .heatMap tr:nth-child(3) { background: red; }
+    .heatMap tr:nth-child(4) { background: yellow; }
+    .heatMap tr:nth-child(5) { background: blue; }
+    .heatMap tr:nth-child(6) { background: cyan; }
+    .heatMap tr:nth-child(7) { background: grey; }
+    .heatMap tr:nth-child(8) { background: write; }
+</style>
+
+<div class="heatMap">
+|color|attribute|
+|---|---|
+|`<span style="color:green">green</span>` | ***green*** (default info color)|
+|<span style="color:magenta">magenta</span> | magenta (default warn color)|
+|<span style="color:red">red</span> | red (default error color)|
+|<span style="color:yellow">yellow</span> | yellow (default debug color)|
+|<span style="color:blue">blue</span> | blue|
+|<span style="color:cyan">cyan</span> | cyan|
+|<span style="color:grey">grey</span> | grey|
+|<span style="color:white">white</span> | white|
+</div>
+
 
 
 
