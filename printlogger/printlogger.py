@@ -149,7 +149,7 @@ class Logging:
     def log_write(self, log_msg, log_file=None):
         if not log_file:
             log_file = self.log_file
-        print(f'log file : {log_file}')
+        # print(f'log file : {log_file}')
         if log_msg:
             with open(log_file, 'a+') as f:
                 f.write(f'{log_msg}\n')
@@ -170,6 +170,9 @@ class Logging:
         else:
             r_color = color if color else self.log_color
             r_level = self.log_level
+
+        if color:
+            r_color = color
 
         return r_color, r_level
 
