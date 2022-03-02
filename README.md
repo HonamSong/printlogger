@@ -56,9 +56,11 @@ logging.custom("custom logger", "yellow", "warn", is_view=True)
 ![alt custom_logger](./img/custom_logger.png)
 
 ### print color list
+![#ff0000](https://placehold.it/12/ff0000?text=+) red
+
  + <span style="color:green">green</span> (default info color)
  + <span style="color:magenta">magenta</span>(default warn color)
-- ![#ff0000](https://placehold.it/12/ff0000?text=+) red
+
  + <span style="color:red">red</span> (default error color)
  + <span style="color:yellow">yellow</span> (default debug color)
  + <span style="color:blue">blue</span> 
