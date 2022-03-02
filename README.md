@@ -58,6 +58,7 @@ logging.custom("custom logger", "yellow", "warn", is_view=True)
 ### print color list
 color|attribute
 ---|---
+<<<<<<< Updated upstream
 ![#ff0000](https://via.placeholder.com/20/ff0000?text=+)|red
 
  + <span style="color:green">green</span> (default info color)
@@ -72,6 +73,16 @@ color|attribute
 
 
 
+=======
+![#008000](https://via.placeholder.com/20/008000?text=+)|green (default info color)
+![#FF00FF](https://via.placeholder.com/20/FF00FF?text=+)|magenta (default warn color)
+![#ff0000](https://via.placeholder.com/20/ff0000?text=+)|red (default error color)
+![#FFEA00](https://via.placeholder.com/20/FFEA00?text=+)|yellow (default debug color)
+![#B6D0E2](https://via.placeholder.com/20/B6D0E2?text=+)|blue
+![#808080](https://via.placeholder.com/20/808080?text=+)|grey
+![#00FFFF](https://via.placeholder.com/20/00FFFF?text=+)|cyan
+![#FFFFFF](https://via.placeholder.com/20/FFFFFF?text=+)|white
+>>>>>>> Stashed changes
 
 # Only write logging to file
 ```python
