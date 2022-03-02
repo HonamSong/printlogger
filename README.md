@@ -58,7 +58,7 @@ logging.custom("custom logger", "yellow", "warn", is_view=True)
 ### print color list
 |color|attribute|
 |---|---|
-|<span style="color:green">green</span> | ***green*** (default info color)|
+|%{color:red} | ***green*** (default info color)|
 |<span style="color:magenta">magenta</span> | magenta (default warn color)|
 |<span style="color:red">red</span> | red (default error color)|
 |<span style="color:yellow">yellow</span> | yellow (default debug color)|
