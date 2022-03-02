@@ -24,7 +24,7 @@ def todaydate(date_type=None):
         return '%s' % datetime.now().strftime("%Y%m%d-%H%M%S%f")[:-3]
 
 
-def check_dir(dir_path, create_if_missing=False, is_show=False):
+def check_dir(dir_path, create_if_missing=False, is_view=False):
     if os.path.isdir(dir_path):
         return_msg = f'Directory is exists :{dir_path}'
         return_color = "green"
@@ -40,13 +40,13 @@ def check_dir(dir_path, create_if_missing=False, is_show=False):
             return_color = "red"
             return_value = False
 
-    if is_show:
+    if is_view:
         cprint(return_msg, return_color)
 
     return return_value
 
 
-def check_file(filename, path=None, is_show=False):
+def check_file(filename, path=None, is_view=False):
     return_msg = None
     return_color = None
 
@@ -69,7 +69,7 @@ def check_file(filename, path=None, is_show=False):
         return_color = 'red'
         return_value = False
 
-    if is_show:
+    if is_view:
         cprint(return_msg, return_color)
 
     return return_value
@@ -104,8 +104,8 @@ class BgColor:
 class Logging:
     def __init__(self, log_path=None, log_file=None,
                  log_color='green', log_level='INFO', log_mode='print',
-                 log_time_format=None,
-                 show_line_num=False, show_file_name=False, show_func_name=False):
+                 log_time_format=None, view_log=True,
+                 view_line_num=False, view_file_name=False, view_func_name=False):
 
         self.log_path = log_path
         self.log_file = log_file
@@ -113,9 +113,10 @@ class Logging:
         self.log_level = log_level
         self.log_mode = log_mode
         self.log_time_format = log_time_format
-        self.show_line_num = show_line_num
-        self.show_file_name = show_file_name
-        self.show_func_name = show_func_name
+        self.view_log = view_log
+        self.view_line_num = view_line_num
+        self.view_file_name = view_file_name
+        self.view_func_name = view_func_name
 
         """
         :param log_path: logging path name
@@ -124,6 +125,10 @@ class Logging:
         :param log_level: logging level
         :param log_mode: print or loging mode ( default : print), [all|write|print]
         :param log_time_format : logging Time format (default YYYY-MM-DD HH:MM:SS:3F)
+        :param view_view : View logs by default [True|False]
+        :param view_line_num : view logs in line number
+        :param view_func_name : view logs in function name + line number
+        :param view_file_name : view logs in file name + line number
         :return:
         """
 
@@ -144,7 +149,7 @@ class Logging:
     def log_write(self, log_msg, log_file=None):
         if not log_file:
             log_file = self.log_file
-        print(f' log file : {log_file}')
+        print(f'log file : {log_file}')
         if log_msg:
             with open(log_file, 'a+') as f:
                 f.write(f'{log_msg}\n')
@@ -190,30 +195,88 @@ class Logging:
 
         return print_fmt
 
-    def log_print(self, msg, color=None, level=None, is_print=False,):
-        # call line number , function name, file name
-        call_file_name = inspect.getmodule(inspect.stack()[1][0]).__file__.split("/")[-1]
-        call_func_name = inspect.currentframe().f_back.f_code.co_name
-        call_source_location = f'line.{inspect.currentframe().f_back.f_lineno}'
-        if self.show_func_name and not self.show_file_name:
-            call_source_location = call_source_location.replace(call_source_location.split('.')[0], call_func_name)
+    def call_check(self, line_num=None, func_name=None, file_name=None):
+        call_source_location = line_num
 
-        if self.show_file_name and not self.show_func_name:
-            call_source_location = call_source_location.replace(call_source_location.split('.')[0], call_file_name)
+        if self.view_func_name and not self.view_file_name:
+            call_source_location = call_source_location.replace(call_source_location.split('.')[0], func_name)
 
-        if self.show_func_name and self.show_file_name:
-            call_name = f'{call_file_name}.{call_func_name}'
+        if self.view_file_name and not self.view_func_name:
+            call_source_location = call_source_location.replace(call_source_location.split('.')[0], file_name)
+
+        if self.view_func_name and self.view_file_name:
+            call_name = f'{file_name}.{func_name}'
             call_source_location = call_source_location.replace(call_source_location.split('.')[0], call_name)
 
-        if not self.show_line_num and not self.show_func_name and not self.show_file_name:
+        if not self.view_line_num and not self.view_func_name and not self.view_file_name:
             call_source_location = False
 
+        return call_source_location
+
+    def printing(self, msg, color, is_view=True):
+        if not self.view_log:
+            is_view = False
+
+        if self.log_mode == 'print' or not self.log_mode or self.log_mode == 'all':
+            if is_view:
+                cprint(msg, color)
+
+        if self.log_mode == 'write' or self.log_mode == 'all':
+            self.log_write(msg,)
+
+    def custom(self, msg, color=None, level=None, is_view=True,):
+        # user custom log
+
+        # call line number , function name, file name
+        # call_file_name = inspect.getmodule(inspect.stack()[1][0]).__file__.split("/")[-1]
+        # call_func_name = inspect.currentframe().f_back.f_code.co_name
+        call_source_location = self.call_check(
+            line_num=f'line.{inspect.currentframe().f_back.f_lineno}',
+            func_name=inspect.currentframe().f_back.f_code.co_name,
+            file_name=inspect.getmodule(inspect.stack()[1][0]).__file__.split("/")[-1]
+        )
         color, level = self.log_level_check(color, level)
         print_msg = f'{self.log_print_format_check(level, call_name=call_source_location)} | {msg}'
 
-        if self.log_mode == 'print' or not self.log_mode or self.log_mode == 'all':
-            if is_print:
-                cprint(print_msg, color)
+        self.printing(print_msg, color, is_view=is_view)
 
-        if self.log_mode == 'write' or self.log_mode == 'all':
-            self.log_write(print_msg,)
+    def info(self, msg, is_view=True,):
+        call_source_location = self.call_check(
+            line_num=f'line.{inspect.currentframe().f_back.f_lineno}',
+            func_name=inspect.currentframe().f_back.f_code.co_name,
+            file_name=inspect.getmodule(inspect.stack()[1][0]).__file__.split("/")[-1]
+        )
+
+        print_msg = f'{self.log_print_format_check("info", call_name=call_source_location)} | {msg}'
+        self.printing(print_msg, "green", is_view=is_view)
+
+    def warn(self, msg, is_view=True,):
+        call_source_location = self.call_check(
+            line_num=f'line.{inspect.currentframe().f_back.f_lineno}',
+            func_name=inspect.currentframe().f_back.f_code.co_name,
+            file_name=inspect.getmodule(inspect.stack()[1][0]).__file__.split("/")[-1]
+        )
+
+        print_msg = f'{self.log_print_format_check("warn", call_name=call_source_location)} | {msg}'
+        self.printing(print_msg, "magenta", is_view=is_view)
+
+    def error(self, msg, is_view=True,):
+        call_source_location = self.call_check(
+            line_num=f'line.{inspect.currentframe().f_back.f_lineno}',
+            func_name=inspect.currentframe().f_back.f_code.co_name,
+            file_name=inspect.getmodule(inspect.stack()[1][0]).__file__.split("/")[-1]
+        )
+
+        print_msg = f'{self.log_print_format_check("error", call_name=call_source_location)} | {msg}'
+        self.printing(print_msg, "red", is_view=is_view)
+
+    def debug(self, msg, is_view=True,):
+        call_source_location = self.call_check(
+            line_num=f'line.{inspect.currentframe().f_back.f_lineno}',
+            func_name=inspect.currentframe().f_back.f_code.co_name,
+            file_name=inspect.getmodule(inspect.stack()[1][0]).__file__.split("/")[-1]
+        )
+
+        print_msg = f'{self.log_print_format_check("debug", call_name=call_source_location)} | {msg}'
+        self.printing(print_msg, "yellow", is_view=is_view)
+
