@@ -56,14 +56,14 @@ logging.custom("custom logger", "yellow", "warn", is_view=True)
 ![alt custom_logger](./img/custom_logger.png)
 
 ### print color list
- + <span style="color:green">green</span> (default info color)
- + <span style="color:magenta">magenta</span>(default warn color)
- + <span style="color:red">red</span> (default error color)
- + <span style="color:yellow">yellow</span> (default debug color)
- + <span style="color:blue">blue</span> 
- + <span style="color:cyan">cyan</span> 
- + <span style="color:grey">grey</span> 
- + <span style="color:white">white</span>
+<span style="color:green">green</span> (default info color)
+<span style="color:magenta">magenta</span>(default warn color)
+<span style="color:red">red</span> (default error color)
+<span style="color:yellow">yellow</span> (default debug color)
+<span style="color:blue">blue</span> 
+<span style="color:cyan">cyan</span> 
+<span style="color:grey">grey</span> 
+<span style="color:white">white</span>
 
 
 
