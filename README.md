@@ -21,16 +21,16 @@ class Logging:
                  log_time_format=None, view_log=True,
                  view_line_num=False, view_file_name=False, view_func_name=False):
 
-    :param log_path: logging path name ( default: ./logs)
+    :param log_path: logging path name (default: ./logs)
     :param log_file: logging file name (default: ./script_name_yyyymmdd.log)
     :param log_color: print log color (default: green)
-    :param log_level: logging level (default: INFO)
-    :param log_mode: print or loging mode ( default : print), [all|write|print]
-    :param log_time_format : logging Time format (default YYYY-MM-DD HH:MM:SS:3F)
-    :param view_view : View logs by default True (Do Not print boolean is False)
-    :param view_line_num : view logs in line number
-    :param view_func_name : view logs in function name + line number
-    :param view_file_name : view logs in file name + line number
+    :param log_level: Default logging level (default: INFO)
+    :param log_mode: print or loging mode (default: print) [all|write|print]
+    :param log_time_format: logging Time format (default YYYY-MM-DD HH:MM:SS:3F)
+    :param view_view: view log by default True (Do Not print boolean is False)
+    :param view_line_num: view log in line number
+    :param view_func_name: view log in function name + line number
+    :param view_file_name: view log in file name + line number
 ```
 
 ### Default level color print logger
@@ -51,14 +51,14 @@ logging.debug("debug_text", is_view=True)
 from printlogger import *
 
 logging = Logging()
-logging.custom("custom logger", "yellow", "warn", is_view=True)
+logging.custom("custom logger", "yellow", "warn", is_view=True, log_file='LOG_FILENAME')
 ```
 ![alt custom_logger](./img/custom_logger.png)
 
 ### print color list
 color|attribute
 ---|---
-![#008000](https://via.placeholder.com/20/008000?text=+)|green (default info color)
+![#008000](https://via.placeholder.com/20/008000?text=+)|***green*** (default info color)
 ![#FF00FF](https://via.placeholder.com/20/FF00FF?text=+)|magenta (default warn color)
 ![#ff0000](https://via.placeholder.com/20/ff0000?text=+)|red (default error color)
 ![#FFEA00](https://via.placeholder.com/20/FFEA00?text=+)|yellow (default debug color)

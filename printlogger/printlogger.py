@@ -2,8 +2,11 @@
 
 import os
 import re
+import time
 import inspect
-from datetime import datetime
+import asyncio
+import subprocess
+from datetime import datetime, timedelta
 from termcolor import cprint
 
 
@@ -22,6 +25,8 @@ def todaydate(date_type=None):
         return '%s' % datetime.now().strftime("%Y%m%d%H%M%S")
     elif date_type == "ms_text":
         return '%s' % datetime.now().strftime("%Y%m%d-%H%M%S%f")[:-3]
+    elif date_type == "yesterday":
+        return '%s' % (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
 
 
 def check_dir(dir_path, create_if_missing=False, is_view=False):
@@ -104,6 +109,7 @@ class BgColor:
 class Logging:
     def __init__(self, log_path=None, log_file=None,
                  log_color='green', log_level='INFO', log_mode='print',
+                 log_rotate=True, log_compress=True,
                  log_time_format=None, view_log=True,
                  view_line_num=False, view_file_name=False, view_func_name=False):
 
@@ -113,6 +119,8 @@ class Logging:
         self.log_level = log_level
         self.log_mode = log_mode
         self.log_time_format = log_time_format
+        self.log_rotate = log_rotate
+        self.log_compress = log_compress
         self.view_log = view_log
         self.view_line_num = view_line_num
         self.view_file_name = view_file_name
@@ -142,14 +150,49 @@ class Logging:
 
             if not self.log_file:
                 filename = os.path.basename(inspect.getmodule(inspect.stack()[1][0]).__file__)
-                self.log_file = filename.replace('.py', f'_{todaydate()}.log')
+                # self.log_file = filename.replace('.py', f'_{todaydate()}.log')
+                self.log_file = filename.replace('.py', '.log')
 
             self.log_file = os.path.join(self.log_path, self.log_file)
 
-    def log_write(self, log_msg, log_file=None):
+    def file_compress(self, filename):
+        gzip_result = None
+        if self.log_compress:
+            if os.path.exists(filename):
+                gzip_result = subprocess.run(['gzip', filename])
+
+        if gzip_result:
+            return True if gzip_result.returncode == 0 else False
+        else:
+            return False
+
+    def logrotate(self, log_file):
+        if self.log_rotate:
+            if os.path.exists(log_file):
+                file_access_day = time.strftime("%Y%m%d", time.localtime(os.path.getatime(log_file)))
+                if str(file_access_day) != str(todaydate()):
+                    after_filename = f"{log_file}.{todaydate('yesterday')}"
+                    os.rename(log_file, after_filename)
+                    self.file_compress(after_filename)
+        return None
+
+    def log_write(self, log_msg, log_file=None, log_path=None):
         if not log_file:
             log_file = self.log_file
-        # print(f'log file : {log_file}')
+
+        if os.path.dirname(log_file):
+            log_path = os.path.dirname(log_file)
+
+        if not log_path:
+            log_path = self.log_path
+
+        log_file = os.path.join(log_path, os.path.basename(log_file))
+
+        # asyncio.run(self.logrotate(log_file))
+        self.logrotate(log_file)
+
+        # cprint(f'++++++++++++++++++ log_file  : {log_file} ' , 'red')
+
         if log_msg:
             with open(log_file, 'a+') as f:
                 f.write(f'{log_msg}\n')
@@ -157,6 +200,9 @@ class Logging:
     def log_level_check(self, color, level):
         # r_color = None
         # r_level = None
+
+        if not level:
+            level = 'info'
 
         if level.upper() == 'WARNING' or level.upper() == 'WARN':
             r_color = Color.magenta
@@ -216,7 +262,7 @@ class Logging:
 
         return call_source_location
 
-    def printing(self, msg, color, is_view=True):
+    def printing(self, msg, color, is_view=True, log_file=None):
         if not self.view_log:
             is_view = False
 
@@ -225,9 +271,9 @@ class Logging:
                 cprint(msg, color)
 
         if self.log_mode == 'write' or self.log_mode == 'all':
-            self.log_write(msg,)
+            self.log_write(msg, log_file=log_file)
 
-    def custom(self, msg, color=None, level=None, is_view=True,):
+    def custom(self, msg, color=None, level=None, is_view=True, log_file=None):
         # user custom log
 
         # call line number , function name, file name
@@ -241,7 +287,7 @@ class Logging:
         color, level = self.log_level_check(color, level)
         print_msg = f'{self.log_print_format_check(level, call_name=call_source_location)} | {msg}'
 
-        self.printing(print_msg, color, is_view=is_view)
+        self.printing(print_msg, color, is_view=is_view, log_file=log_file)
 
     def info(self, msg, is_view=True,):
         call_source_location = self.call_check(
@@ -282,4 +328,3 @@ class Logging:
 
         print_msg = f'{self.log_print_format_check("debug", call_name=call_source_location)} | {msg}'
         self.printing(print_msg, "yellow", is_view=is_view)
-
